@@ -1,0 +1,33 @@
+from telegram import Update, ReplyKeyboardMarkup
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+
+BOT_TOKEN = "8456724024:AAESpsOA2oUdL8iAew4DDtuWtDAtbyPLoeA"
+
+# Start komandasi
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+        ["🍕 Pizza", "🥤 Ichimlik"],
+        ["🍰 Desert", "❌ Bekor qilish"]
+    ]
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    await update.message.reply_text("Salom! Nima buyurtma qilasiz?", reply_markup=reply_markup)
+
+# Foydalanuvchi tanlagan buyurtmani qabul qilish
+async def handle_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text
+    if text == "❌ Bekor qilish":
+        await update.message.reply_text("Buyurtma bekor qilindi ❌")
+    else:
+        await update.message.reply_text(f"📦 Buyurtma qabul qilindi: {text}")
+
+def main():
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_order))
+
+    print("Bot ishga tushdi... ✅")
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
